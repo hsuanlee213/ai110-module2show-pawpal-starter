@@ -19,18 +19,18 @@ class Task:
     recurrence_pattern: Optional[str] = None  # "daily", "weekly", etc.
     
     def update_task(self, updates: Dict) -> None:
-        """Update task attributes from a dictionary"""
+        """Update task attributes."""
         for key, value in updates.items():
             if hasattr(self, key):
                 setattr(self, key, value)
     
     def mark_complete(self) -> None:
-        """Mark the task as completed and record completion time"""
+        """Mark task as completed with timestamp."""
         self.completed = True
         self.completed_at = datetime.now()
     
     def get_task_summary(self) -> str:
-        """Return a formatted summary of the task"""
+        """Get formatted task summary with status."""
         pet_name = self.pet.name if self.pet else "Unknown Pet"
         status = "✓ Completed" if self.completed else "⏳ Pending"
         return f"{self.title} ({pet_name}) - {self.category} - {status}"
@@ -48,16 +48,16 @@ class Pet:
     tasks: List[Task] = field(default_factory=list)
     
     def add_task(self, task: Task) -> None:
-        """Add a task to this pet and link the task back to the pet"""
+        """Add task with bidirectional pet link."""
         task.pet = self
         self.tasks.append(task)
     
     def get_tasks(self) -> List[Task]:
-        """Return all tasks for this pet"""
+        """Get all tasks for this pet."""
         return self.tasks
     
     def update_pet_info(self, info: Dict) -> None:
-        """Update pet information from a dictionary"""
+        """Update pet attributes."""
         for key, value in info.items():
             if hasattr(self, key) and key != "tasks":
                 setattr(self, key, value)
@@ -73,23 +73,23 @@ class Owner:
         self.pets: List[Pet] = []
     
     def add_pet(self, pet: Pet) -> None:
-        """Add a pet to the owner's collection and assign a pet_id"""
+        """Add pet with auto-assigned ID."""
         pet.pet_id = len(self.pets)
         self.pets.append(pet)
     
     def update_preferences(self, prefs: Dict) -> None:
-        """Update owner preferences from a dictionary"""
+        """Update owner preferences."""
         self.preferences.update(prefs)
     
     def get_pet_info(self, pet_id: int) -> Optional[Pet]:
-        """Find and return a pet by pet_id"""
+        """Get pet by ID."""
         for pet in self.pets:
             if pet.pet_id == pet_id:
                 return pet
         return None
     
     def get_all_tasks(self) -> List[Task]:
-        """Collect and return all tasks from all of the owner's pets"""
+        """Get all tasks across all pets."""
         all_tasks = []
         for pet in self.pets:
             all_tasks.extend(pet.get_tasks())
@@ -107,15 +107,15 @@ class Scheduler:
         self.daily_plan: List[Task] = []
     
     def add_tasks_from_owner(self) -> None:
-        """Load all tasks from the owner's pets into the scheduler"""
+        """Load owner's tasks into scheduler."""
         self.tasks = self.owner.get_all_tasks()
     
     def sort_tasks(self) -> List[Task]:
-        """Sort tasks by priority (descending) and then by preferred_time"""
+        """Sort tasks by priority and time."""
         return sorted(self.tasks, key=lambda t: (-t.priority, t.preferred_time or ""))
     
     def detect_conflicts(self) -> List[tuple]:
-        """Detect simple conflicts where tasks have the same preferred time"""
+        """Find tasks scheduled for the same time."""
         conflicts = []
         sorted_tasks = self.sort_tasks()
         
@@ -131,13 +131,13 @@ class Scheduler:
         return conflicts
     
     def generate_daily_plan(self) -> List[Task]:
-        """Generate and return a daily plan sorted by priority and time"""
+        """Generate sorted daily task plan."""
         self.add_tasks_from_owner()
         self.daily_plan = self.sort_tasks()
         return self.daily_plan
     
     def explain_plan(self) -> str:
-        """Generate a human-readable explanation of the daily plan"""
+        """Get human-readable daily schedule."""
         if not self.daily_plan:
             return "No tasks scheduled for today."
         
