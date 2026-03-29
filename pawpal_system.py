@@ -138,6 +138,30 @@ class Scheduler:
         
         return conflicts
     
+    def filter_by_completion_status(self, completed: bool) -> List[Task]:
+        """
+        Filter tasks by completion status.
+        
+        Args:
+            completed: True for completed tasks, False for pending tasks
+            
+        Returns:
+            List of tasks matching the completion status
+        """
+        return [task for task in self.tasks if task.completed == completed]
+    
+    def filter_by_pet_name(self, pet_name: str) -> List[Task]:
+        """
+        Filter tasks by pet name.
+        
+        Args:
+            pet_name: Name of the pet to filter by
+            
+        Returns:
+            List of tasks for the specified pet
+        """
+        return [task for task in self.tasks if task.pet and task.pet.name.lower() == pet_name.lower()]
+    
     def generate_daily_plan(self) -> List[Task]:
         """Generate sorted daily task plan."""
         self.add_tasks_from_owner()
