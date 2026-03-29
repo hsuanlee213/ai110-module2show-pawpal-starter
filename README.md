@@ -57,3 +57,5 @@ python3 -m pytest
 The current tests cover core PawPal+ system behavior, including task sorting, recurring daily task creation, conflict detection for tasks scheduled at the same time, and other foundational task and pet interactions.
 
 Confidence Level: ★★★★★
+
+### Demo

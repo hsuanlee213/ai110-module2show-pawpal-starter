@@ -150,28 +150,35 @@ if st.button("Generate schedule"):
         
         # Display the plan
         st.success("✨ Daily Schedule Generated!")
-        st.markdown(scheduler.explain_plan())
         
-        # Check for conflicts
+        # Check for conflicts first
+        st.subheader("⚠️ Conflict Status")
         conflicts = scheduler.detect_conflicts()
         if conflicts:
-            st.warning("⚠️ **Scheduling Conflicts Detected:**")
-            for task1, task2 in conflicts:
-                st.write(f"• '{task1.title}' and '{task2.title}' both at {task1.preferred_time}")
+            st.warning("**Scheduling Conflicts Detected:**")
+            for conflict_warning in conflicts:
+                st.write(conflict_warning)
         else:
             st.success("✓ No scheduling conflicts!")
         
-        # Display sorted task list
-        st.markdown("### Tasks by Priority & Time")
+        # Display sorted task schedule as a clean table
+        st.subheader("📋 Today's Schedule (Sorted by Priority & Time)")
         sorted_tasks = scheduler.sort_tasks()
+        
+        # Build table data
+        schedule_data = []
         for idx, task in enumerate(sorted_tasks, 1):
-            col1, col2, col3 = st.columns([2, 1, 1])
-            with col1:
-                st.write(f"{idx}. **{task.title}** ({task.pet.name})")
-            with col2:
-                st.write(f"{task.duration}min")
-            with col3:
-                st.write(f"Priority: {task.priority}")
+            schedule_data.append({
+                "Order": idx,
+                "Pet": task.pet.name if task.pet else "Unknown",
+                "Task": task.title,
+                "Time": task.preferred_time,
+                "Duration": f"{task.duration}min",
+                "Priority": task.priority,
+                "Status": "✓ Done" if task.completed else "⏳ Pending"
+            })
+        
+        st.dataframe(schedule_data, use_container_width=True)
     else:
         st.warning("⚠️ Please finish setup:")
         if not st.session_state.owner:
