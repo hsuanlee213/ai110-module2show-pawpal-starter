@@ -22,6 +22,54 @@ Your final app should:
 - Display the plan clearly (and ideally explain the reasoning)
 - Include tests for the most important scheduling behaviors
 
+## Features
+
+### Owner & Pet Management
+
+- Create and manage pet owner profiles with available time per day
+- Add multiple pets to an owner with detailed info (name, species, breed, age, care notes)
+- Auto-assigned pet IDs for easy tracking and retrieval
+
+### Task Creation & Management
+
+- Create pet care tasks with essential properties: title, category, duration, priority, and preferred time
+- Update task attributes dynamically
+- Mark tasks complete with automatic timestamp tracking
+- View task summaries with pet name and completion status
+
+### Smart Scheduling & Sorting
+
+- **Priority-Based Sorting**: Sort tasks by priority level (higher priority = earlier in day)
+- **Time-Based Ordering**: Tasks scheduled at the same priority are ordered chronologically by preferred time
+- Generate daily task plan with automatic sorting by priority and time
+
+### Task Filtering
+
+- **Filter by Pet**: View all tasks for a specific pet (case-insensitive search)
+- **Filter by Status**: Separate pending and completed tasks
+- Get comprehensive task lists across all pets for an owner
+
+### Recurring Tasks
+
+- Support for daily and weekly recurring tasks with automatic recurrence pattern tracking
+- Automatically generate next task occurrence when a recurring task is completed
+- Copy task properties (title, category, duration, priority, time) to next occurrence
+- Track due dates and maintain completion history
+
+### Conflict Detection
+
+- Automatically detect when multiple tasks are scheduled at the same time
+- Generate clear, detailed warning messages for each conflict
+- Display pet names and task titles in conflict alerts for easy identification
+
+### Streamlit User Interface
+
+- Clean, beginner-friendly web interface for all features
+- Interactive forms to set up owner/pet info and add tasks
+- One-click schedule generation with polished dataframe display
+- Real-time conflict warnings with visual alerts
+- Organized sections for each phase of the workflow (setup → tasks → scheduling)
+
 ## Getting started
 
 ### Setup
@@ -59,3 +107,7 @@ The current tests cover core PawPal+ system behavior, including task sorting, re
 Confidence Level: ★★★★★
 
 ### Demo
+
+<a href="pawpal_demo1.png" target="_blank"><img src="pawpal_demo1.png" title="PawPal App" alt="PawPal App" class="center-block" /></a>
+
+<a href="pawpal_demo2.png" target="_blank"><img src="pawpal_demo2.png" title="PawPal App" alt="PawPal App" class="center-block" /></a>
