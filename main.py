@@ -1,5 +1,5 @@
 from pawpal_system import Owner, Pet, Task, Scheduler
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 def main():
@@ -42,7 +42,8 @@ def main():
         priority=3,
         preferred_time="6:00 PM",
         recurring=True,
-        recurrence_pattern="daily"
+        recurrence_pattern="daily",
+        due_date=datetime(2026, 3, 29)  # Today's date
     )
     
     # Task 1: Morning (added second)
@@ -53,7 +54,8 @@ def main():
         priority=3,
         preferred_time="8:00 AM",
         recurring=True,
-        recurrence_pattern="daily"
+        recurrence_pattern="daily",
+        due_date=datetime(2026, 3, 29)
     )
     
     # Task 3: Mid-morning (added third)
@@ -64,7 +66,8 @@ def main():
         priority=4,  # Higher priority
         preferred_time="9:00 AM",
         recurring=True,
-        recurrence_pattern="daily"
+        recurrence_pattern="weekly",
+        due_date=datetime(2026, 3, 29)
     )
     
     # Task 2: Late morning (added last)
@@ -74,8 +77,8 @@ def main():
         duration=30.0,
         priority=2,
         preferred_time="10:00 AM",
-        recurring=True,
-        recurrence_pattern="daily"
+        recurring=False,  # Non-recurring
+        due_date=datetime(2026, 3, 29)
     )
     
     # Add tasks to pets in mixed order
@@ -192,6 +195,60 @@ def main():
     print("\nMarking 'Feed Fluffy' as complete...")
     task1.mark_complete()
     print(f"  {task1.get_task_summary()}")
+    
+    print("\n" + "=" * 50)
+    print("🔄 TESTING RECURRING TASK LOGIC")
+    print("=" * 50)
+    
+    # Test recurring task creation - daily recurrence
+    print("\n📋 Before creating recurring tasks:")
+    print(f"  Fluffy's tasks: {len(fluffy.get_tasks())}")
+    print(f"  Buddy's tasks: {len(buddy.get_tasks())}")
+    
+    # Create recurring task for "Feed Fluffy" (daily)
+    print("\n✅ Marking 'Feed Fluffy' as complete and creating next occurrence...")
+    new_task1 = scheduler.handle_recurring_task(task1)
+    if new_task1:
+        print(f"  ✓ Created: {new_task1.title}")
+        print(f"    Due: {new_task1.due_date.strftime('%Y-%m-%d')}")
+        print(f"    Completed: {new_task1.completed}")
+        print(f"    Recurrence: {new_task1.recurrence_pattern}")
+    else:
+        print("  ✗ Failed to create recurring task")
+    
+    # Create recurring task for "Walk Buddy" (weekly)
+    print("\n✅ Marking 'Walk Buddy' as complete and creating next occurrence...")
+    new_task3 = scheduler.handle_recurring_task(task3)
+    if new_task3:
+        print(f"  ✓ Created: {new_task3.title}")
+        print(f"    Due: {new_task3.due_date.strftime('%Y-%m-%d')}")
+        print(f"    Completed: {new_task3.completed}")
+        print(f"    Recurrence: {new_task3.recurrence_pattern}")
+        days_until = (new_task3.due_date - task3.due_date).days
+        print(f"    Days until next: {days_until}")
+    else:
+        print("  ✗ Failed to create recurring task")
+    
+    # Try to create recurring task for non-recurring task (should fail)
+    print("\n⚠️  Trying to create recurring task for non-recurring task...")
+    result = scheduler.handle_recurring_task(task2)
+    if result is None:
+        print("  ✓ Correctly skipped (task is not recurring)")
+    else:
+        print("  ✗ Unexpected result")
+    
+    # Reload scheduler to see all updated tasks
+    scheduler.add_tasks_from_owner()
+    print(f"\n📊 After creating recurring tasks:")
+    print(f"  Fluffy's tasks: {len(fluffy.get_tasks())}")
+    print(f"  Buddy's tasks: {len(buddy.get_tasks())}")
+    
+    print("\n🐱 All Fluffy's tasks (including new recurring ones):")
+    for i, t in enumerate(fluffy.get_tasks(), 1):
+        status = "✓" if t.completed else "⏳"
+        due = t.due_date.strftime('%Y-%m-%d') if t.due_date else "None"
+        recur = f" [{t.recurrence_pattern}]" if t.recurring else ""
+        print(f"  {i}. {status} {t.title} (due: {due}){recur}")
 
 
 if __name__ == "__main__":

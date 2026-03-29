@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
 from typing import List, Dict, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 
 
 @dataclass
@@ -137,6 +137,53 @@ class Scheduler:
                     conflicts.append((task1, task2))
         
         return conflicts
+    
+    def handle_recurring_task(self, task: Task) -> Optional[Task]:
+        """
+        Create a new task instance for a recurring task's next occurrence.
+        
+        When a recurring task is completed, this method automatically creates
+        a new task for the next occurrence based on the recurrence pattern.
+        
+        Args:
+            task: The completed task to check for recurrence
+            
+        Returns:
+            The newly created task, or None if task is not recurring or missing required info
+        """
+        # Validate task has all required attributes for recurrence
+        if not task.recurring or not task.recurrence_pattern or not task.pet or not task.due_date:
+            return None
+        
+        # Calculate next due date based on recurrence pattern
+        pattern = task.recurrence_pattern.lower()
+        
+        if pattern == "daily":
+            next_due_date = task.due_date + timedelta(days=1)
+        elif pattern == "weekly":
+            next_due_date = task.due_date + timedelta(days=7)
+        else:
+            # Unknown recurrence pattern, do not create recurring task
+            return None
+        
+        # Create new task with same properties but reset for next occurrence
+        new_task = Task(
+            title=task.title,
+            category=task.category,
+            duration=task.duration,
+            priority=task.priority,
+            preferred_time=task.preferred_time,
+            recurring=True,
+            recurrence_pattern=task.recurrence_pattern,
+            completed=False,  # New task is not completed
+            due_date=next_due_date,
+            completed_at=None  # No completion time yet
+        )
+        
+        # Add new task to the same pet (sets pet reference via add_task)
+        task.pet.add_task(new_task)
+        
+        return new_task
     
     def filter_by_completion_status(self, completed: bool) -> List[Task]:
         """
