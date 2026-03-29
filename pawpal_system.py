@@ -112,7 +112,15 @@ class Scheduler:
     
     def sort_tasks(self) -> List[Task]:
         """Sort tasks by priority and time."""
-        return sorted(self.tasks, key=lambda t: (-t.priority, t.preferred_time or ""))
+        def time_key(task):
+            time_str = task.preferred_time or "23:59"
+            try:
+                hours, minutes = map(int, time_str.split(":"))
+                return hours * 60 + minutes  # Convert to minutes for proper sorting
+            except (ValueError, AttributeError):
+                return 24 * 60  # Default to end of day if invalid
+        
+        return sorted(self.tasks, key=lambda t: (-t.priority, time_key(t)))
     
     def detect_conflicts(self) -> List[tuple]:
         """Find tasks scheduled for the same time."""
