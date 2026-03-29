@@ -29,11 +29,14 @@ I also improved the Task design by noting that it needs better time-related info
 
 - What constraints does your scheduler consider (for example: time, priority, preferences)?
 - How did you decide which constraints mattered most?
+  My scheduler considers task time, priority, and completion status when organizing a daily plan. It also uses pet information to group and manage tasks more clearly. I decided that time and priority mattered most because the app’s main goal is to help a pet owner see what needs to be done and in what order. Completion status also matters because completed tasks should not be treated the same as pending ones.
 
 **b. Tradeoffs**
 
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
+
+One tradeoff my scheduler makes is that conflict detection only checks whether two tasks have the exact same scheduled time. This is reasonable for this scenario because it keeps the logic simple and easy to understand, while still giving useful warnings for obvious conflicts. It does not detect partial overlaps based on task duration, but that level of detail was not necessary for this version of the project.
 
 ---
 

@@ -122,52 +122,31 @@ class Scheduler:
         
         return sorted(self.tasks, key=lambda t: (-t.priority, time_key(t)))
     
+    def _get_pet_name(self, task: Task) -> str:
+        """Safely retrieve pet name or return fallback."""
+        return task.pet.name if task.pet else "Unknown Pet"
+    
     def detect_conflicts(self) -> List[str]:
-        """
-        Detect scheduling conflicts when two tasks share the same preferred_time.
-        
-        Returns a list of human-readable warning messages instead of raising errors.
-        Each message includes task titles, pet names, and the conflicting time.
-        
-        Returns:
-            List of conflict warning strings, or empty list if no conflicts found
-        """
+        """Detect and report tasks scheduled at the same time."""
         warnings = []
-        sorted_tasks = self.sort_tasks()
         
-        for i in range(len(sorted_tasks)):
-            for j in range(i + 1, len(sorted_tasks)):
-                task1 = sorted_tasks[i]
-                task2 = sorted_tasks[j]
+        for i in range(len(self.tasks)):
+            for j in range(i + 1, len(self.tasks)):
+                task1 = self.tasks[i]
+                task2 = self.tasks[j]
                 
-                # Simple conflict detection: same preferred_time
+                # Check if tasks are scheduled at the same time
                 if task1.preferred_time == task2.preferred_time:
-                    # Build informative warning message
-                    pet1_name = task1.pet.name if task1.pet else "Unknown Pet"
-                    pet2_name = task2.pet.name if task2.pet else "Unknown Pet"
-                    time_str = task1.preferred_time or "Unscheduled"
-                    
                     warning = (
-                        f"⚠️  Conflict: '{task1.title}' ({pet1_name}) and "
-                        f"'{task2.title}' ({pet2_name}) both scheduled at {time_str}"
+                        f"⚠️  Conflict: '{task1.title}' ({self._get_pet_name(task1)}) and "
+                        f"'{task2.title}' ({self._get_pet_name(task2)}) both scheduled at {task1.preferred_time}"
                     )
                     warnings.append(warning)
         
         return warnings
     
     def handle_recurring_task(self, task: Task) -> Optional[Task]:
-        """
-        Create a new task instance for a recurring task's next occurrence.
-        
-        When a recurring task is completed, this method automatically creates
-        a new task for the next occurrence based on the recurrence pattern.
-        
-        Args:
-            task: The completed task to check for recurrence
-            
-        Returns:
-            The newly created task, or None if task is not recurring or missing required info
-        """
+        """Automatically create the next occurrence of a recurring task."""
         # Validate task has all required attributes for recurrence
         if not task.recurring or not task.recurrence_pattern or not task.pet or not task.due_date:
             return None
@@ -203,27 +182,11 @@ class Scheduler:
         return new_task
     
     def filter_by_completion_status(self, completed: bool) -> List[Task]:
-        """
-        Filter tasks by completion status.
-        
-        Args:
-            completed: True for completed tasks, False for pending tasks
-            
-        Returns:
-            List of tasks matching the completion status
-        """
+        """Return tasks filtered by completion status (True = completed, False = pending)."""
         return [task for task in self.tasks if task.completed == completed]
     
     def filter_by_pet_name(self, pet_name: str) -> List[Task]:
-        """
-        Filter tasks by pet name.
-        
-        Args:
-            pet_name: Name of the pet to filter by
-            
-        Returns:
-            List of tasks for the specified pet
-        """
+        """Return all tasks for a specific pet (case-insensitive)."""
         return [task for task in self.tasks if task.pet and task.pet.name.lower() == pet_name.lower()]
     
     def generate_daily_plan(self) -> List[Task]:
