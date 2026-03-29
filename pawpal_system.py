@@ -122,9 +122,17 @@ class Scheduler:
         
         return sorted(self.tasks, key=lambda t: (-t.priority, time_key(t)))
     
-    def detect_conflicts(self) -> List[tuple]:
-        """Find tasks scheduled for the same time."""
-        conflicts = []
+    def detect_conflicts(self) -> List[str]:
+        """
+        Detect scheduling conflicts when two tasks share the same preferred_time.
+        
+        Returns a list of human-readable warning messages instead of raising errors.
+        Each message includes task titles, pet names, and the conflicting time.
+        
+        Returns:
+            List of conflict warning strings, or empty list if no conflicts found
+        """
+        warnings = []
         sorted_tasks = self.sort_tasks()
         
         for i in range(len(sorted_tasks)):
@@ -134,9 +142,18 @@ class Scheduler:
                 
                 # Simple conflict detection: same preferred_time
                 if task1.preferred_time == task2.preferred_time:
-                    conflicts.append((task1, task2))
+                    # Build informative warning message
+                    pet1_name = task1.pet.name if task1.pet else "Unknown Pet"
+                    pet2_name = task2.pet.name if task2.pet else "Unknown Pet"
+                    time_str = task1.preferred_time or "Unscheduled"
+                    
+                    warning = (
+                        f"⚠️  Conflict: '{task1.title}' ({pet1_name}) and "
+                        f"'{task2.title}' ({pet2_name}) both scheduled at {time_str}"
+                    )
+                    warnings.append(warning)
         
-        return conflicts
+        return warnings
     
     def handle_recurring_task(self, task: Task) -> Optional[Task]:
         """

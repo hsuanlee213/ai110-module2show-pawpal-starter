@@ -81,12 +81,24 @@ def main():
         due_date=datetime(2026, 3, 29)
     )
     
+    # Task 5: Create a CONFLICTING task (same time as Walk Buddy for testing conflict detection)
+    task5 = Task(
+        title="Cuddle with Buddy",
+        category="Playtime",
+        duration=15.0,
+        priority=2,
+        preferred_time="9:00 AM",  # SAME TIME as task3 (Walk Buddy)
+        recurring=False,
+        due_date=datetime(2026, 3, 29)
+    )
+    
     # Add tasks to pets in mixed order
     fluffy.add_task(task4)  # This belongs to Buddy, will be re-assigned
     buddy.add_task(task4)
     fluffy.add_task(task1)
     buddy.add_task(task3)
     fluffy.add_task(task2)
+    buddy.add_task(task5)  # Add conflicting task to Buddy
     
     # Mark some tasks as completed to test filtering
     task1.mark_complete()  # Feed Fluffy - completed
@@ -171,11 +183,11 @@ def main():
     print("\n" + "=" * 50)
     
     # Check for conflicts
-    conflicts = scheduler.detect_conflicts()
-    if conflicts:
-        print("⚠️  Scheduling Conflicts Detected:")
-        for task1, task2 in conflicts:
-            print(f"   - '{task1.title}' and '{task2.title}' at {task1.preferred_time}")
+    conflict_warnings = scheduler.detect_conflicts()
+    if conflict_warnings:
+        print("🔍 SCHEDULING CONFLICTS DETECTED:\n")
+        for warning in conflict_warnings:
+            print(f"  {warning}")
     else:
         print("✓ No scheduling conflicts detected!")
     
