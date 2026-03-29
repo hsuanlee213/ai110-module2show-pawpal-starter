@@ -54,6 +54,9 @@ classDiagram
         +detect_conflicts()
         +generate_daily_plan()
         +explain_plan()
+        +handle_recurring_task(task): Task
+        +filter_by_completion_status(completed): List[Task]
+        +filter_by_pet_name(pet_name): List[Task]
     }
 
     Owner "1" --> "*" Pet : owns
