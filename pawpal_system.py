@@ -13,6 +13,10 @@ class Task:
     preferred_time: str
     recurring: bool
     completed: bool = False
+    pet: Optional['Pet'] = None
+    due_date: Optional[datetime] = None
+    completed_at: Optional[datetime] = None
+    recurrence_pattern: Optional[str] = None  # "daily", "weekly", etc.
     
     def update_task(self, updates: Dict) -> None:
         """Update task attributes"""
@@ -35,6 +39,7 @@ class Pet:
     breed: str
     age: int
     care_notes: str
+    pet_id: int = field(default_factory=lambda: None)
     tasks: List[Task] = field(default_factory=list)
     
     def add_task(self, task: Task) -> None:
@@ -68,18 +73,27 @@ class Owner:
         pass
     
     def get_pet_info(self, pet_id: int) -> Optional[Pet]:
-        """Get information about a specific pet"""
+        """Get information about a specific pet by ID"""
+        pass
+    
+    def get_all_tasks(self) -> List[Task]:
+        """Get all tasks across all of the owner's pets"""
         pass
 
 
 class Scheduler:
     """Scheduler for managing and organizing pet care tasks"""
     
-    def __init__(self, available_time: float, constraints: Dict = None):
+    def __init__(self, owner: 'Owner', available_time: float, constraints: Dict = None):
+        self.owner = owner
         self.tasks: List[Task] = []
         self.available_time = available_time
         self.constraints = constraints or {}
         self.daily_plan: List[Task] = []
+    
+    def add_tasks_from_owner(self, owner: 'Owner') -> None:
+        """Load all tasks from the owner's pets into the scheduler"""
+        pass
     
     def sort_tasks(self) -> List[Task]:
         """Sort tasks by priority and other criteria"""

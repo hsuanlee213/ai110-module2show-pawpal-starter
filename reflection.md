@@ -17,6 +17,10 @@ My initial UML design included four main classes: Owner, Pet, Task, and Schedule
 - Did your design change during implementation?
 - If yes, describe at least one change and why you made it.
 
+I updated my design to make the scheduling system more practical. I added stronger relationships between classes, especially by connecting each Task to a specific Pet and giving the Scheduler more context about the Owner and Pets. I also realized that the Owner should have a way to gather tasks across all pets so the system can build a complete daily plan.
+
+I also improved the Task design by noting that it needs better time-related information, such as a due date, scheduled time, or recurrence pattern. Finally, I recognized that some details should be more reliable, such as using a clearer way to identify pets and tracking task completion more carefully. These changes made the design more connected and better suited for the app’s scheduling goals.
+
 ---
 
 ## 2. Scheduling Logic and Tradeoffs
